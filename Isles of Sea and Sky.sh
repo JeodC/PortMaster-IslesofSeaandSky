@@ -36,20 +36,18 @@ export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 # Run the installer file if it hasn't been run yet
 install-win() {
-    if [ ! -f "$GAMEDIR/installed" ]; then	
-        echo "Performing first-run setup..." > $CUR_TTY
-        # Purge unneeded files
-        rm -rf assets/*.exe assets/*.dll
-        # Rename data.win
-        echo "Moving the game file..." > $CUR_TTY
-        mv "./assets/data.win" "./game.droid"
-        mv "./assets/game_data.ini" "./game_data.ini"
-        mv "./assets/options.ini" "./options.ini"
-        # Create a new zip file game.apk from specified directories
-        echo "Zipping assets into apk..." > $CUR_TTY
-        ./utils/zip -r -0 "game.apk" "assets"
-        rm -rf "$GAMEDIR/assets"
-    fi
+  echo "Performing first-run setup..." > $CUR_TTY
+  # Purge unneeded files
+  rm -rf assets/*.exe assets/*.dll
+  # Rename data.win
+  echo "Moving the game file..." > $CUR_TTY
+  mv "./assets/data.win" "./game.droid"
+  mv "./assets/game_data.ini" "./game_data.ini"
+  mv "./assets/options.ini" "./options.ini"
+  # Create a new zip file game.apk from specified directories
+  echo "Zipping assets into apk..." > $CUR_TTY
+  ./utils/zip -r -0 "game.apk" "assets"
+  rm -rf "$GAMEDIR/assets"
 }
 
 if [ ! -f "$GAMEDIR/game.droid" ]; then
