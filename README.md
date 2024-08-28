@@ -7,8 +7,7 @@ Add your game data from your Steam installation to `ports/islesofseaandsky/asset
 |START|Menus|
 |SELECT|Map|
 |D-PAD / Analog|Move|
-|A|Unknown|
-|B|Unknown|
+|L1|Undo|
 |R1|Reset room|
 
 ## Thanks
