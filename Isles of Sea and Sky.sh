@@ -35,7 +35,7 @@ export LD_LIBRARY_PATH="$GAMEDIR/libs:$GAMEDIR/utils/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 # Run the installer file if it hasn't been run yet
-install-win() {
+install() {
   echo "Performing first-run setup..." > $CUR_TTY
   # Purge unneeded files
   rm -rf assets/*.exe assets/*.dll
@@ -51,7 +51,7 @@ install-win() {
 }
 
 if [ ! -f "$GAMEDIR/game.droid" ]; then
-    install-win
+    install
 fi
 
 # Assign gptokeyb and load the game
