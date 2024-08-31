@@ -23,7 +23,9 @@
     "rtr": false,
     "exp": false,
     "runtime": null,
-    "reqs": [],
+    "reqs": [
+		"power"
+	],
     "arch": [
       "aarch64"
     ]

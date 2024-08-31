@@ -38,17 +38,22 @@ export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 install() {
   echo "Performing first-run setup..." > $CUR_TTY
   # Purge unneeded files
-  rm -rf assets/*.exe assets/*.dll
+  rm -rf assets/*.exe assets/*.dll assets/.gitkeep
   # Rename data.win
-  echo "Moving the game file..." > $CUR_TTY
+  echo "Moving game files..." > $CUR_TTY
   mv "./assets/data.win" "./game.droid"
-  mv "./assets/game_data.ini" "./game_data.ini"
-  mv "./assets/options.ini" "./options.ini"
-  # Create a new zip file game.apk from specified directories
-  echo "Zipping assets into apk..." > $CUR_TTY
-  ./utils/zip -r -0 "game.apk" "assets"
+  mv patch/* ./
+  mv assets/* ./
+  find $GAMEDIR -type f -iname "*.ttf" ! -iname "Commodore Rounded v1-1.ttf" ! -iname "small_pixel.ttf" -delete
   rm -rf "$GAMEDIR/assets"
 }
+
+# Do localization fonts patch if low ram
+if [ $DEVICE_RAM -lt 2 ]; then
+rm -rf assets/localization_fonts.csv
+mv patch/* ./
+rm -rf "$GAMEDIR/patch"
+fi
 
 if [ ! -f "$GAMEDIR/game.droid" ]; then
     install
