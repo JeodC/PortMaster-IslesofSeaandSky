@@ -34,29 +34,50 @@ $ESUDO chmod 777 "$GAMEDIR/gmloadernext"
 export LD_LIBRARY_PATH="$GAMEDIR/libs:$GAMEDIR/utils/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
-# Run the installer file if it hasn't been run yet
+# Functions
 install() {
-  echo "Performing first-run setup..." > $CUR_TTY
-  # Purge unneeded files
-  rm -rf assets/*.exe assets/*.dll assets/.gitkeep
-  # Rename data.win
-  echo "Moving game files..." > $CUR_TTY
-  mv "./assets/data.win" "./game.droid"
-  mv patch/* ./
-  mv assets/* ./
-  find $GAMEDIR -type f -iname "*.ttf" ! -iname "Commodore Rounded v1-1.ttf" ! -iname "small_pixel.ttf" -delete
-  rm -rf "$GAMEDIR/assets"
+    echo "Performing first-run setup..." > $CUR_TTY
+    # Purge unneeded files
+    rm -rf assets/*.exe assets/*.dll assets/.gitkeep
+    # Rename data.win
+    echo "Moving game files..." > $CUR_TTY
+    mv "./assets/data.win" "./game.droid"
+    mv patch/* ./
+    mv assets/* ./
+    rm -rf "$GAMEDIR/assets"
 }
 
-# Do localization fonts patch if low ram
-if [ $DEVICE_RAM -lt 2 ]; then
-rm -rf assets/localization_fonts.csv
-mv patch/* ./
-rm -rf "$GAMEDIR/patch"
-fi
+apply_patch() {
+    echo "Applying patch..." > $CUR_TTY
+    if [ -f "$controlfolder/xdelta3" ]; then
+        error=$("$controlfolder/xdelta3" -d -s "$GAMEDIR/game.droid" "$GAMEDIR/patch/iosas.xdelta" "$GAMEDIR/game2.droid" 2>&1)
+        if [ $? -eq 0 ]; then
+            rm -rf "$GAMEDIR/game.droid"
+            mv "$GAMEDIR/game2.droid" "$GAMEDIR/game.droid"
+            echo "Patch applied successfully." > $CUR_TTY
+        else
+            echo "Failed to apply patch. Error: $error" > $CUR_TTY
+            sleep 2
+            exit 1
+        fi
+    else
+        echo "You must have the PortMaster GUI app installed to use this port!" > $CUR_TTY
+        sleep 2
+        exit 1
+    fi
+}
 
 if [ ! -f "$GAMEDIR/game.droid" ]; then
     install
+fi
+
+# Do localization fonts and xdelta patch if low ram
+if [ $DEVICE_RAM -lt 2 ]; then
+    rm -rf "$GAMEDIR/localization_fonts.csv"
+    mv patch/localization_fonts.csv ./
+    find $GAMEDIR -type f -iname "*.ttf" ! -iname "Commodore Rounded v1-1.ttf" ! -iname "small_pixel.ttf" -delete
+    apply_patch
+    rm -rf "$GAMEDIR/patch"
 fi
 
 # Assign gptokeyb and load the game
