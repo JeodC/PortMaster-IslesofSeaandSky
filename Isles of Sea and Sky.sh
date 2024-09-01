@@ -41,10 +41,17 @@ install() {
     rm -rf assets/*.exe assets/*.dll assets/.gitkeep
     # Rename data.win
     echo "Moving game files..." > $CUR_TTY
-    mv "./assets/data.win" "./game.droid"
+    mv "./assets/data.win" "./game.droid" || return 1
     mv patch/* ./
     mv assets/* ./
     rm -rf "$GAMEDIR/assets"
+    # Do localization fonts and xdelta patch if low ram
+    if [ $DEVICE_RAM -lt 2 ]; then
+        rm -rf "$GAMEDIR/localization_fonts.csv"
+        mv patch/localization_fonts.csv ./
+        find $GAMEDIR -type f -iname "*.ttf" ! -iname "Commodore Rounded v1-1.ttf" ! -iname "small_pixel.ttf" -delete
+        apply_patch && rm -rf "$GAMEDIR/patch" # Only remove if function is successful
+    fi
 }
 
 apply_patch() {
@@ -57,27 +64,17 @@ apply_patch() {
             echo "Patch applied successfully." > $CUR_TTY
         else
             echo "Failed to apply patch. Error: $error" > $CUR_TTY
-            sleep 2
-            exit 1
+            rm -f "$GAMEDIR/game2.droid"
+            return 1
         fi
     else
-        echo "You must have the PortMaster GUI app installed to use this port!" > $CUR_TTY
-        sleep 2
-        exit 1
+        echo "Error: xdelta3 not found in $controlfolder. Try updating PortMaster." > $CUR_TTY
+        return 1
     fi
 }
 
-if [ ! -f "$GAMEDIR/game.droid" ]; then
-    install
-fi
-
-# Do localization fonts and xdelta patch if low ram
-if [ $DEVICE_RAM -lt 2 ]; then
-    rm -rf "$GAMEDIR/localization_fonts.csv"
-    mv patch/localization_fonts.csv ./
-    find $GAMEDIR -type f -iname "*.ttf" ! -iname "Commodore Rounded v1-1.ttf" ! -iname "small_pixel.ttf" -delete
-    apply_patch
-    rm -rf "$GAMEDIR/patch"
+if [ ! -f "$GAMEDIR/game.droid" ] && [ ! -f "$GAMEDIR/.installed" ]; then
+    install && touch "$GAMEDIR/.installed" # Only touch if function is successful
 fi
 
 # Assign gptokeyb and load the game
