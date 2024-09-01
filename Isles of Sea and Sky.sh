@@ -44,19 +44,19 @@ install() {
     mv "./assets/data.win" "./game.droid" || return 1
     mv assets/* ./
     rmdir assets
-    # Do localization fonts and xdelta patch if low ram
+    apply_patch
+    # Do localization fonts if low ram
     if [ $DEVICE_RAM -lt 2 ]; then
         rm -rf "$GAMEDIR/localization_fonts.csv"
         mv patch/localization_fonts.csv ./
         find $GAMEDIR -type f -iname "*.ttf" ! -iname "Commodore Rounded v1-1.ttf" ! -iname "small_pixel.ttf" -delete
-        apply_patch && rm -rf "$GAMEDIR/patch" # Only remove if function is successful
     fi
 }
 
 apply_patch() {
     echo "Applying patch..." > $CUR_TTY
     if [ -f "$controlfolder/xdelta3" ]; then
-        error=$("$controlfolder/xdelta3" -d -s "$GAMEDIR/game.droid" "$GAMEDIR/patch/iosas.xdelta" "$GAMEDIR/game2.droid" 2>&1)
+        error=$("$controlfolder/xdelta3" -d -s "$GAMEDIR/game.droid" "$GAMEDIR/patch/patch_idol_sfx.xdelta" "$GAMEDIR/game2.droid" 2>&1)
         if [ $? -eq 0 ]; then
             rm -rf "$GAMEDIR/game.droid"
             mv "$GAMEDIR/game2.droid" "$GAMEDIR/game.droid"
