@@ -42,19 +42,28 @@ if (surface_exists(drawSurfaceSmall))
 The `for` loop in this script draws lines with angles every frame, which is taxing. Implementing a frameskip option mitigates the issue:
 
 ```gml
-var framesToSkip, angleIncrement, i, angle;
+var angleIncrement, i, angle;
 
-framesToSkip = 20;
+if (!variable_global_exists("framesToSkip"))
+{
+    ini_open("pm-config.ini");
+    global.framesToSkip = ini_read_real("Performance", "FrameSkip", 20);
+    ini_close();
+}
 
 if (!variable_global_exists("frameCounter"))
     global.frameCounter = 0;
 
-if (!variable_global_exists("DrawLines"))
-    global.DrawLines = true;
+if (!variable_global_exists("IdolSFX"))
+{
+    ini_open("pm-config.ini");
+    global.IdolSFX = ini_read_real("Performance", "IdolSFX", 1);
+    ini_close();
+}
 
 global.frameCounter++;
 
-if (global.frameCounter >= framesToSkip && global.DrawLines)
+if (global.frameCounter >= global.framesToSkip && global.IdolSFX == 1)
 {
     global.frameCounter = 0;
     
@@ -84,6 +93,7 @@ if (global.frameCounter >= framesToSkip && global.DrawLines)
 
 if (surface_exists(global.smallDrawingSurface))
     draw_surface(global.smallDrawingSurface, 0, 0);
+
 ```
 
-The loop only executes every 20 frames and only if DrawLines is true, allowing the loop to be turned off completely if necessary and switching the low fps out in favor of a split-second stutter every 20 frames.
+The loop only executes every X frames and only if IdolSFX is true, allowing the loop to be turned off completely if necessary and switching the low fps out in favor of a split-second stutter every X frames.
