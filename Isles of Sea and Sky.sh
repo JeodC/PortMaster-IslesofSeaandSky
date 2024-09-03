@@ -31,8 +31,9 @@ cd $GAMEDIR
 $ESUDO chmod 777 "$GAMEDIR/gmloadernext"
 
 # Exports
-export LD_LIBRARY_PATH="$GAMEDIR/libs:$GAMEDIR/utils/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$GAMEDIR/libs:$GAMEDIR/tools/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
+export PATH="$GAMEDIR/tools:$PATH"
 
 # Functions
 install() {
@@ -45,6 +46,7 @@ install() {
     mv assets/* ./
     rmdir assets
     apply_patch
+    compress_audio || return 1
     # Do localization fonts if low ram
     if [ $DEVICE_RAM -lt 2 ]; then
         rm -rf "$GAMEDIR/localization_fonts.csv"
@@ -72,8 +74,24 @@ apply_patch() {
     fi
 }
 
+compress_audio() {
+    echo "Compressing audio. The process will take 5-10 minutes"  > $CUR_TTY
+
+    gm-Ktool.py "$GAMEDIR/game.droid" "$GAMEDIR/game2.droid"
+
+    if [ $? -eq 0 ]; then
+            rm -rf "$GAMEDIR/game.droid"
+            mv "$GAMEDIR/game2.droid" "$GAMEDIR/game.droid"
+            echo "Audio compression applied successfully." > $CUR_TTY
+        else
+            echo "Audio compression failed." > $CUR_TTY
+            rm -f "$GAMEDIR/game2.droid"
+            return 1
+    fi
+}
+
 if [ ! -f "$GAMEDIR/game.droid" ] && [ ! -f "$GAMEDIR/.installed" ]; then
-    install && touch "$GAMEDIR/.installed" # Only touch if function is successful
+    install && touch "$GAMEDIR/.installed" || return 1 # Only touch if function is successful
 fi
 
 # Assign gptokeyb and load the game
