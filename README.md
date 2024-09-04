@@ -4,12 +4,14 @@ Isles of Sea and Sky is a sokoban block puzzle game with Zelda-like elements and
 <div align="center">
   <table>
     <tr>
-      <td>
+      <td align="center">
+        <p align="center">Isles of Sea and Sky Launch Trailer</p>  
         <a href="https://www.youtube.com/watch?v=euaG9rsGrfA">
           <img src="https://img.youtube.com/vi/euaG9rsGrfA/0.jpg" alt="Isles of Sea and Sky Launch Trailer" width="300"/>
         </a>
       </td>
-      <td>
+      <td align="center">
+        <p>&nbsp;</p> <!-- Adjust spaces to match -->
         <img src="https://images.squarespace-cdn.com/content/v1/5cef1ac40bf916000135fdcc/f4b9a8a8-b054-4e14-9f1e-cc2687e888e2/iss_river.gif" alt="Isles of Sea and Sky GIF" width="300"/>
       </td>
     </tr>
