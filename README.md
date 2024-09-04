@@ -35,7 +35,7 @@ The xdelta patch enables `pm-config.ini`, which has some performance options. Te
 
 ## Thanks
 Cicada Games -- The game and [press kit materials](https://islesofseaandsky.com/press-kit) used to create the splash screens  
-Kotzebuedog -- The phenomenal audio patch that makes this port possible  
+Cyril "kotzebuedog" Delétré -- The phenomenal audio patch that makes this port possible  
 nate -- Custom loading splash engine  
 JohnnyOnFlame -- GMLoaderNext  
 Testers and Devs from the PortMaster Discord  
