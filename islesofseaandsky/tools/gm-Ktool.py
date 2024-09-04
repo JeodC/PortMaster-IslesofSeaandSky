@@ -183,7 +183,7 @@ class IFFdata:
             audokey = f"{i:#04}"
             self.audo[audokey] = { "offset": offset, "size": size, "compress": 0}
 
-            self.__vvvprint(f"AUDO entry {nb_entries}: {self.audo[audokey]}")
+            self.__vvvprint(f"AUDO entry {i:#04}: {self.audo[audokey]}")
 
 
     def __audo_get_raw_entry(self,key):
@@ -256,12 +256,21 @@ class IFFdata:
             self.fileout.write(self.filein.read(size + 8))
             self.fileout_size += size + 8
 
+            padding = self.__get_padding(16)
+            
+            self.fileout.write(b'\x00' * padding )
+            self.fileout_size += padding
+
         else:
-            self.__vvprint("Direct copy AUDO")
+            self.__vvprint("Rebuild AUDO")
             self.fileout.write(self.filein.read(4)) # Token should be the same
             self.fileout_size += 4
             self.fileout.write(pack('<I', 0xffffffff)) # Unknow size yet
             self.fileout_size += 4
+            
+            self.fileout.write(pack('<I', len(self.audo.keys()))) # Number of audo entries
+            self.fileout_size += 4
+
             table_offset = self.fileout.tell()
 
             self.fileout.write(pack('<I', 0xffffffff) * len(self.audo.keys())) # offset entries are unknow yet
@@ -359,7 +368,7 @@ class IFFdata:
     def __write_to_file_audo_ogg(self, audo_entry):
         chunksize = 0
         oggenc_process = (
-            Popen(["oggenc","-b",f"{self.bitrate}","-"],bufsize=1024,stdin=PIPE, stdout=PIPE )
+            Popen(["oggenc","-b",f"{self.bitrate}","-"],bufsize=1024,stdin=PIPE, stdout=PIPE, stderr=PIPE )
         )
 
         thread = threading.Thread(target=self.__thread_writer, args=(oggenc_process,audo_entry))
