@@ -268,7 +268,7 @@ class IFFdata:
             self.fileout.write(pack('<I', 0xffffffff)) # Unknow size yet
             self.fileout_size += 4
             
-            self.fileout.write(pack('<I', len(self.audo.keys()))) # Unknow size yet
+            self.fileout.write(pack('<I', len(self.audo.keys()))) # Number of audo entries
             self.fileout_size += 4
 
             table_offset = self.fileout.tell()
