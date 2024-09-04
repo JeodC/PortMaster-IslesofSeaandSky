@@ -93,7 +93,6 @@ if (global.frameCounter >= global.framesToSkip && global.IdolSFX == 1)
 
 if (surface_exists(global.smallDrawingSurface))
     draw_surface(global.smallDrawingSurface, 0, 0);
-
 ```
 
 The loop only executes every X frames and only if IdolSFX is true, allowing the loop to be turned off completely if necessary and switching the low fps out in favor of a split-second stutter every X frames.

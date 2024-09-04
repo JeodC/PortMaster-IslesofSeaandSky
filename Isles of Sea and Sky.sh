@@ -24,6 +24,7 @@ echo "Loading, please wait... (might take a while!)" > /dev/tty0
 
 # Variables
 GAMEDIR="/$directory/ports/islesofseaandsky"
+BITRATE=64
 
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
@@ -42,7 +43,7 @@ install() {
     rm -rf assets/*.exe assets/*.dll assets/.gitkeep
     # Rename data.win
     echo "Moving game files..." > $CUR_TTY
-    mv "./assets/data.win" "./game.droid" || return 1
+    mv "./assets/data.win" "./game.droid"
     mv assets/* ./
     rmdir assets
     apply_patch
@@ -77,7 +78,7 @@ apply_patch() {
 compress_audio() {
     echo "Compressing audio. The process will take 5-10 minutes"  > $CUR_TTY
 
-    gm-Ktool.py "$GAMEDIR/game.droid" "$GAMEDIR/game2.droid"
+    gm-Ktool.py -b $BITRATE "$GAMEDIR/game.droid" "$GAMEDIR/game2.droid" || return 1
 
     if [ $? -eq 0 ]; then
             rm -rf "$GAMEDIR/game.droid"
