@@ -1,9 +1,6 @@
 ## Installation
 Add your game data from your Steam installation to `ports/islesofseaandsky/assets`. First-time run will handle sorting data.
 
-Due to some memory issues, localization has been removed. The fonts that are used do not contain all the characters needed for other languages. This may be remedied in the future. If you use a high-ram device, you can try manually 
-adding the original `localization_fonts.csv` and the missing font `.ttf` files and see if it's playable.
-
 ## Default Gameplay Controls
 | Button | Action |
 |--|--|
@@ -17,6 +14,8 @@ adding the original `localization_fonts.csv` and the missing font `.ttf` files a
 The xdelta patch enables `pm-config.ini`, which has some performance options. Testing found that `FrameSkip=40` works pretty well for the H700 chip. For no stuttering at all, you can set `IdolSFX=0` to turn off the special effect that bogs down the cpu.
 
 ## Thanks
-Cicada Games -- The game  
+Cicada Games -- The game and [press kit materials](https://islesofseaandsky.com/press-kit) used to create the splash screens  
+Kotzebuedog -- The phenomenal audio patch that makes this port possible  
+nate -- Custom loading splash engine  
 JohnnyOnFlame -- GMLoaderNext  
 Testers and Devs from the PortMaster Discord  

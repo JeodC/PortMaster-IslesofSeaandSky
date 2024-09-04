@@ -97,6 +97,10 @@ if [ ! -f "$GAMEDIR/game.droid" ]; then
     install || return 1
 fi
 
+if [ $DEVICE_RAM -lt 2 ]; then
+    sed -i "s/^IdolSFX=[0-9]\+/IdolSFX=0/" "$GAMEDIR/pm-config.ini"
+fi
+
 # Assign gptokeyb and load the game
 $GPTOKEYB "gmloadernext" -c "control.gptk" &
 ./gmloadernext game.apk
