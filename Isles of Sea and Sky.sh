@@ -23,13 +23,15 @@ $ESUDO chmod 666 /dev/uinput
 echo "Loading, please wait... (might take a while!)" > /dev/tty0
 
 # Variables
-GAMEDIR="/$directory/ports/islesofseaandsky"
+GAMEDIR="/$directory/ports/iosas"
 BITRATE=64
 
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
 $ESUDO chmod 777 "$GAMEDIR/gmloadernext"
+$ESUDO chmod 777 "$GAMEDIR/libs/splash"
+$ESUDO chmod 777 "$GAMEDIR/tools/gm-Ktool.py"
 
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:$GAMEDIR/tools/lib:$LD_LIBRARY_PATH"
