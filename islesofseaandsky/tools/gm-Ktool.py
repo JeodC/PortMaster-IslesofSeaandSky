@@ -22,7 +22,7 @@ MIN_SIZE = 1024*1024 # 1 MB
 
 class IFFdata:
 
-    def __init__(self, fin_path, verbose=0):
+    def __init__(self, fin_path, verbose=0, bitrate=128):
         self.filein_path = fin_path
         self.filein = None
         self.filein_size = 0 # includes FORM (4B) and size (4B)
@@ -34,6 +34,7 @@ class IFFdata:
         self.audo = None
 
         self.verbose = verbose
+        self.bitrate = bitrate
 
         self.__init_chunk_list()
         self.__init_sond()
@@ -348,17 +349,17 @@ class IFFdata:
         self.filein.seek(4 + self.audo[audo_entry]["offset"]) # jump to audio data (skip 4B length)
 
         for i in range(n_chunks):
-            process.stdin.write(self.filein.read(chunk_size))  # Write chunk of data bytes to stdin pipe of FFmpeg sub-process.
+            process.stdin.write(self.filein.read(chunk_size))  # Write chunk of data bytes to stdin pipe of oggenc sub-process.
 
         if (remainder_size > 0):
-            process.stdin.write(self.filein.read(remainder_size))  # Write remainder bytes of data bytes to stdin pipe of FFmpeg sub-process.
+            process.stdin.write(self.filein.read(remainder_size))  # Write remainder bytes of data bytes to stdin pipe of oggenc sub-process.
 
         process.stdin.close()  # Close stdin pipe - closing stdin finish encoding the data, and closes FFmpeg sub-process.
 
     def __write_to_file_audo_ogg(self, audo_entry):
         chunksize = 0
         oggenc_process = (
-            Popen(["oggenc","-"],bufsize=1024,stdin=PIPE, stdout=PIPE )
+            Popen(["oggenc","-b",f"{self.bitrate}","-"],bufsize=1024,stdin=PIPE, stdout=PIPE )
         )
 
         thread = threading.Thread(target=self.__thread_writer, args=(oggenc_process,audo_entry))
@@ -375,7 +376,7 @@ class IFFdata:
         self.fileout.write(ogg_chunk)  # Write the encoded chunk to the "in-memory file".
         chunksize += len(ogg_chunk)
 
-        oggenc_process.wait() # Wait for FFmpeg sub-process to end
+        oggenc_process.wait() # Wait for oggenc sub-process to end
         
         return chunksize
 
@@ -458,6 +459,7 @@ def main():
     parser.add_argument('-v','--verbose', action='count', default=0, help='Verbose level (cumulative option)')
     parser.add_argument('-m','--minsize', default=MIN_SIZE, help='Minimum WAV size in bytes to target (default 1MB)')
     parser.add_argument('-a','--audiogroup', nargs='?',action='append',type=int, help='Audiogroup ID to process (option can repeat). By default any.')
+    parser.add_argument('-b','--bitrate', default=128, help='nominal bitrate (in kbps) to encode at (oggenc -b option). Default 128 kbps')
 
     parser.add_argument('infilepath', help='Input file path')
     parser.add_argument('outfilepath', help='Output file path')
@@ -469,7 +471,7 @@ def main():
     else:
         agrp_list = []
 
-    myiffdata = IFFdata(args.infilepath, args.verbose)
+    myiffdata = IFFdata(args.infilepath, args.verbose, args.bitrate)
     myiffdata.audio_set_compress(agrp_list, args.minsize)
     myiffdata.write_to_file(args.outfilepath)
 
