@@ -63,7 +63,7 @@ install() {
 apply_patch() {
     echo "Applying patch..." > $CUR_TTY
     if [ -f "$controlfolder/xdelta3" ]; then
-        error=$("$controlfolder/xdelta3" -d -s "$GAMEDIR/game.droid" "$GAMEDIR/patch/patch_idol_sfx.xdelta" "$GAMEDIR/game2.droid" 2>&1)
+        error=$("$controlfolder/xdelta3" -d -s "$GAMEDIR/game.droid" "$GAMEDIR/tools/patch_idol_sfx.xdelta" "$GAMEDIR/game2.droid" 2>&1)
         if [ $? -eq 0 ]; then
             rm -rf "$GAMEDIR/game.droid"
             mv "$GAMEDIR/game2.droid" "$GAMEDIR/game.droid"
