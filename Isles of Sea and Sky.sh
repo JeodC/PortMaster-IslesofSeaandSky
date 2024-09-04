@@ -101,6 +101,11 @@ if [ ! -f "$GAMEDIR/game.droid" ]; then
     install || return 1
 fi
 
+# Font replacements
+if [ -f "localization_fonts.csv" ]; then
+    sed -i 's/malgun\.ttf/BMDOHYEON_ttf.ttf/g' localization_fonts.csv # Korean
+fi
+
 # Assign gptokeyb and load the game
 $GPTOKEYB "gmloadernext" -c "control.gptk" &
 ./gmloadernext game.apk
