@@ -36,6 +36,12 @@ export LD_LIBRARY_PATH="$GAMEDIR/libs:$GAMEDIR/tools/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 export PATH="$GAMEDIR/tools:$PATH"
 
+# Display loading splash
+if [ -f "$GAMEDIR/game.droid" ]; then
+    $ESUDO ./libs/splash "splash.png" 1 
+    $ESUDO ./libs/splash "splash.png" 8000
+fi
+
 # Functions
 install() {
     echo "Performing first-run setup..." > $CUR_TTY
@@ -48,12 +54,6 @@ install() {
     rmdir assets
     apply_patch
     compress_audio || return 1
-    # Do localization fonts if low ram
-    if [ $DEVICE_RAM -lt 2 ]; then
-        rm -rf "$GAMEDIR/localization_fonts.csv"
-        mv patch/localization_fonts.csv ./
-        find $GAMEDIR -type f -iname "*.ttf" ! -iname "Commodore Rounded v1-1.ttf" ! -iname "small_pixel.ttf" -delete
-    fi
 }
 
 apply_patch() {
@@ -78,7 +78,7 @@ apply_patch() {
 compress_audio() {
     echo "Compressing audio. The process will take 5-10 minutes"  > $CUR_TTY
 
-    gm-Ktool.py -b $BITRATE "$GAMEDIR/game.droid" "$GAMEDIR/game2.droid" || return 1
+    gm-Ktool.py -b $BITRATE "$GAMEDIR/game.droid" "$GAMEDIR/game2.droid"
 
     if [ $? -eq 0 ]; then
             rm -rf "$GAMEDIR/game.droid"
@@ -91,8 +91,10 @@ compress_audio() {
     fi
 }
 
-if [ ! -f "$GAMEDIR/game.droid" ] && [ ! -f "$GAMEDIR/.installed" ]; then
-    install && touch "$GAMEDIR/.installed" || return 1 # Only touch if function is successful
+if [ ! -f "$GAMEDIR/game.droid" ]; then
+    $ESUDO ./libs/splash "patching_splash.png" 1 
+    $ESUDO ./libs/splash "patching_splash.png" 12000 &
+    install || return 1
 fi
 
 # Assign gptokeyb and load the game
