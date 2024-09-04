@@ -1,3 +1,21 @@
+## Isles of Sea and Sky -- PortMaster Edition
+Isles of Sea and Sky is a sokoban block puzzle game with Zelda-like elements and a stunning soundtrack. With a lot of effort, this game is able to be run on small-arm linux handhelds using a Game Maker compatibility layer called GMLoader-Next and some patches to reduce memory and cpu usage.
+
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <a href="https://www.youtube.com/watch?v=euaG9rsGrfA">
+          <img src="https://img.youtube.com/vi/euaG9rsGrfA/0.jpg" alt="Isles of Sea and Sky Launch Trailer" width="300"/>
+        </a>
+      </td>
+      <td>
+        <img src="https://images.squarespace-cdn.com/content/v1/5cef1ac40bf916000135fdcc/f4b9a8a8-b054-4e14-9f1e-cc2687e888e2/iss_river.gif" alt="Isles of Sea and Sky GIF" width="300"/>
+      </td>
+    </tr>
+  </table>
+</div>
+
 ## Installation
 Add your game data from your Steam installation to `ports/islesofseaandsky/assets`. First-time run will handle sorting data.
 
