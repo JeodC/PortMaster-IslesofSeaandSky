@@ -54,6 +54,10 @@ install() {
     rmdir assets
     apply_patch
     compress_audio || return 1
+    # Only do this during the install step so the user can turn it back on if they wish post-install
+    if [ $DEVICE_RAM -lt 2 ]; then
+        sed -i "s/^IdolSFX=[0-9]\+/IdolSFX=0/" "$GAMEDIR/pm-config.ini"
+    fi
 }
 
 apply_patch() {
@@ -95,10 +99,6 @@ if [ ! -f "$GAMEDIR/game.droid" ]; then
     $ESUDO ./libs/splash "patching_splash.png" 1 
     $ESUDO ./libs/splash "patching_splash.png" 12000 &
     install || return 1
-fi
-
-if [ $DEVICE_RAM -lt 2 ]; then
-    sed -i "s/^IdolSFX=[0-9]\+/IdolSFX=0/" "$GAMEDIR/pm-config.ini"
 fi
 
 # Assign gptokeyb and load the game
