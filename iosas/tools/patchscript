@@ -52,7 +52,14 @@ process_game() {
         
     sleep 3
     
-    #compress_audio
+    compress_audio
+    
+    # Font replacements
+    if [ -f "localization_fonts.csv" ]; then
+        sed -i 's/malgun\.ttf/BMDOHYEON_ttf.ttf/g' localization_fonts.csv # Korean
+        rm -rf malgun.ttf
+        echo "Patched font files"
+    fi
 	
     # Final completion message
     echo "Patching process complete!"
