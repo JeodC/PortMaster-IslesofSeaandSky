@@ -19,28 +19,37 @@ get_controls
 
 # Variables
 GAMEDIR="/$directory/ports/iosas"
-BITRATE=64
 
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
-# Setup permissions
-$ESUDO chmod 666 /dev/tty1
-$ESUDO chmod 666 /dev/uinput
-$ESUDO chmod +x -R $GAMEDIR/*
-echo "Loading, please wait... (might take a while!)" > $CUR_TTY
-
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:$GAMEDIR/tools/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
-export PATH="$GAMEDIR/tools:$PATH"
-export TMPDIR="$GAMEDIR/tmp"
+export PATCHER_FILE="$GAMEDIR/tools/patchscript"
+export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
+export PATCHER_TIME="5 to 10 minutes"
+
+# CD and set permissions
+cd $GAMEDIR
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
+$ESUDO chmod +x -R $GAMEDIR/*
+$ESUDO chmod 666 /dev/tty1
+$ESUDO chmod 666 /dev/uinput
+
+# dos2unix in case we need it
+dos2unix "$GAMEDIR/tools/gmKtool.py"
+dos2unix "$GAMEDIR/tools/Klib/GMblob.py"
+dos2unix "$GAMEDIR/tools/patchscript"
 
 # Check if patchlog.txt to skip patching
 if [ ! -f patchlog.txt ]; then
-    $GPTOKEYB "love" &
-    ./love patcher -f "tools/patchscript" -g "Isles of Sea and Sky" -t "about 5 minutes"
-    $ESUDO kill -9 $(pidof gptokeyb)
+    if [ -f "$controlfolder/utils/patcher.txt" ]; then
+        source "$controlfolder/utils/patcher.txt"
+        $ESUDO kill -9 $(pidof gptokeyb)
+    else
+        echo "This port requires the latest version of PortMaster." > $CUR_TTY
+    fi
 else
     echo "Patching process already completed. Skipping."
 fi
@@ -49,11 +58,6 @@ fi
 if [ -f "$GAMEDIR/game.droid" ]; then
     $ESUDO ./libs/splash "splash.png" 1 
     $ESUDO ./libs/splash "splash.png" 8000
-fi
-
-if [ -f "$GAMEDIR/game.droid" ]; then
-    $ESUDO ./libs/splash "splash.png" 1 
-    $ESUDO ./libs/splash "splash.png" 12000 &
 fi
 
 # Assign gptokeyb and load the game
