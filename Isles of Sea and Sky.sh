@@ -55,7 +55,7 @@ else
 fi
 
 # Display loading splash
-if [ -f "$GAMEDIR/game.droid" ]; then
+if [ -f "$GAMEDIR/patchlog.txt" ]; then
     $ESUDO ./libs/splash "splash.png" 1 
     $ESUDO ./libs/splash "splash.png" 8000
 fi
